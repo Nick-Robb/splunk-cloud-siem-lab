@@ -1,15 +1,22 @@
-# ---- Terraform ----
-*.tfstate
-*.tfstate.*
+# Terraform artifacts
+/terraform/.terraform/
+/terraform/terraform.tfstate*
+/terraform/*.backup
+/terraform/.terraform.lock.hcl
+
+# AWS CLI creds (just in case)
+~/.aws/credentials
+
+# IDE metadata
+.vscode/
+.DS_Store
+
+# Script outputs
+/scripts/*.fix
+/scripts/*.json
+# Local Terraform state
+*.tfstate*
 .terraform/
-.terraform.lock.hcl
 
-# ---- Build / installers ----
-*.msi
-*.exe
-*.zip
-
-# ---- Misc ----
-*.tfvars
-crash.log
-screenshots/
+# AWS CLI installer
+AWSCLIV2.msi
