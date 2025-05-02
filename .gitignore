@@ -5,3 +5,20 @@
 .terraform.lock.hcl
 crash.log
 *.tfvars
+
+
+# ---- Terraform ----
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# ---- Build / installers ----
+*.msi
+*.exe
+*.zip
+
+# ---- Misc ----
+*.tfvars
+crash.log
+screenshots/
