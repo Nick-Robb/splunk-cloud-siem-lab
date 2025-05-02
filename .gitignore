@@ -1,12 +1,3 @@
-# Terraform
-*.tfstate
-*.tfstate.*
-.terraform/
-.terraform.lock.hcl
-crash.log
-*.tfvars
-
-
 # ---- Terraform ----
 *.tfstate
 *.tfstate.*
