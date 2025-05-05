@@ -2,10 +2,6 @@
 # VPC Flow Logs → S3  (NO custom IAM role needed)
 ###############################################################################
 
-data "aws_vpc" "default" {
-  default = true
-}
-
 # Allow Flow Logs service to write to the bucket
 resource "aws_s3_bucket_policy" "allow_flowlogs" {
   bucket = aws_s3_bucket.log_storage.id
