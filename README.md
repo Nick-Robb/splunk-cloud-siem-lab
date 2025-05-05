@@ -64,9 +64,23 @@ curl -k http://<splunk_ip>:8088/services/collector \
   -H "Authorization: Splunk <splunk_hec_token>" \
   -d '{"event":"HEC connectivity test"}'
 
-Screenshots
+## Architecture Diagram
 
-See the /docs folder for:
+![SIEM Lab Architecture](docs/architecture.png)  
+*Figure 1: AWS resources and Splunk EC2 flow.*
+
+## Screenshots
+
+| Description                         | Image                                                                 |
+|-------------------------------------|-----------------------------------------------------------------------|
+| Terraform initialization             | ![Terraform Init](screenshots/Terraform-init.png)                    |
+| Terraform plan                       | ![Terraform Plan](screenshots/Terraform-plan.png)                    |
+| Terraform apply                      | ![Terraform Apply](screenshots/Terraform-apply.png)                  |
+| VPC Flow Logs import plan            | ![Plan VPC Flow Logs](screenshots/plan-vpc-flowlogs.png)             |
+| CloudTrail plan                      | ![Plan CloudTrail](screenshots/plan-cloudtrail.png)                  |
+| S3 bucket recreate policy update     | ![S3 Bucket Policy](screenshots/s3-bucket-recreate.png)              |
+| Splunk Web accessible (login screen) | ![Splunk Web](screenshots/Splunk-Web-accessible.png)                 |
+
 
 Terraform plan/apply outputs
 
