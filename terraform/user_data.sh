@@ -5,25 +5,38 @@
 wget -O /tmp/splunk.tgz "https://download.splunk.com/products/splunk/releases/9.1.3/linux/splunk-9.1.3-xxxxxxx-linux-2.6-x86_64.tgz"
 tar zxvf /tmp/splunk.tgz -C /opt
 
-# Start Splunk, accept license, enable at boot
-/opt/splunk/bin/splunk start --accept-license --answer-yes --no-prompt
-/opt/splunk/bin/splunk enable boot-start
+# Enable Splunk at boot and accept license
+/opt/splunk/bin/splunk enable boot-start --accept-license --answer-yes
+
+# Only seed the admin password if this is the very first setup
+if [ ! -f /opt/splunk/etc/passwd ]; then
+    /opt/splunk/bin/splunk start --accept-license --answer-yes --no-prompt --seed-passwd "changeme"
+else
+    /opt/splunk/bin/splunk start
+fi
+
+# Wait for Splunk to be fully started before config (important!)
+sleep 40
 
 # Create HEC token (injected by Terraform)
-/opt/splunk/bin/splunk http-event-collector create \
-  --name terraform-hec \
-  --token ${hec_token} \
-  --index main
+if [ ! -z "${hec_token}" ]; then
+  /opt/splunk/bin/splunk http-event-collector create \
+    --name terraform-hec \
+    --token ${hec_token} \
+    --index main
+fi
 
-# Configure AWS S3 input for CloudTrail & VPC Flow Logs
-/opt/splunk/bin/splunk add aws-account \
-  --account-name terraform \
-  --iam-role-arn arn:aws:iam::$(curl -s http://169.254.169.254/latest/meta-data/iam/info | jq -r .InstanceProfileArn) \
-  --default
+# Configure AWS S3 input for CloudTrail & VPC Flow Logs (optional, requires Splunk add-ons)
+if [ ! -z "${s3_bucket}" ]; then
+  /opt/splunk/bin/splunk add aws-account \
+    --account-name terraform \
+    --iam-role-arn arn:aws:iam::$(curl -s http://169.254.169.254/latest/meta-data/iam/info | jq -r .InstanceProfileArn) \
+    --default
 
-/opt/splunk/bin/splunk add s3-ltg \
-  --bucket ${s3_bucket} \
-  --sourcetype aws:cloudtrail
+  /opt/splunk/bin/splunk add s3-ltg \
+    --bucket ${s3_bucket} \
+    --sourcetype aws:cloudtrail
+fi
 
-# Restart to pick up HEC & inputs
+# Final restart to apply all settings
 /opt/splunk/bin/splunk restart

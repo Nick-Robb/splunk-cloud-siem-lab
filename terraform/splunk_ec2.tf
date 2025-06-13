@@ -41,19 +41,18 @@ resource "random_string" "hec_token" {
   special = false
 }
 
-# SSH keypair for Splunk
+# SSH keypair for Splunk - uses your local public key file
 resource "aws_key_pair" "splunk_key" {
-  key_name   = "splunk-key"
-  public_key = file(var.public_key_path)
+  key_name = "splunk-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDxPmMCoSrFKpz18sskPMIQttgcLmRjIDSMK5vJEdbJgUkm5jg8OPQGepzVCzn1+w1nhguJH95Z0o4zgaKCqpN5jkIfu28axk27Zvd3TO7QbyWA1y2W3ZVbwn7qkYwVAGqrEOCAI+rAYayVWP29JDptBgNcj5q/V2p6d9rzCZqJBdnC5+5LO7F/kQLeXsbE/kbK8THhuTaQiHo2fsqETCwnWiErgbluZLLP7vX+/7hD9U8G8jEvybQPOjZeFX5Bqb/9RtkfjJNI8vlUzXJ+ZrtA8aJvPgdyYvFMj3zEDUCgw3nRNjawNlYp4DlmMZEWbLbtcGoWDHdwD6d7ds8qWU4J"
 }
 
-# Splunk EC2 instance
 resource "aws_instance" "splunk" {
   ami                    = var.splunk_ami_id
   instance_type          = var.instance_type
   key_name               = aws_key_pair.splunk_key.key_name
   vpc_security_group_ids = [aws_security_group.splunk_sg.id]
-  subnet_id = data.aws_subnets.default.ids[0]
+  subnet_id              = data.aws_subnets.default.ids[0]
 
   user_data = templatefile("${path.module}/user_data.sh", {
     hec_token = random_string.hec_token.result
